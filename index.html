@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI-Interview Tester</title>
+<title>Research Interview — Cross-Selling in Off-Road Machinery</title>
 <style>
   :root {
     --green: #08954C;
@@ -31,69 +31,111 @@
     flex-direction: column;
     min-height: 100vh;
   }
-  header {
-    padding: 20px 20px 16px;
+
+  /* ---------- Consent screen ---------- */
+  .consent-screen {
+    padding: 32px 24px 40px;
+    overflow-y: auto;
+  }
+  .consent-screen h1 {
+    font-size: 21px;
+    margin: 0 0 4px;
+    font-weight: 700;
+  }
+  .consent-screen .study-meta {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 24px;
+  }
+  .consent-screen h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--green-dark);
+    margin: 22px 0 8px;
+  }
+  .consent-screen p, .consent-screen li {
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 0 0 8px;
+  }
+  .consent-screen ul {
+    margin: 0 0 8px;
+    padding-left: 20px;
+  }
+  .placeholder {
+    background: #fff4e0;
+    border: 1px solid #f0d9a8;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 13px;
+    color: #8a6100;
+  }
+  .consent-box {
+    margin-top: 26px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: white;
+  }
+  .consent-box label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .consent-box input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+  .start-btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    background: var(--green);
+    color: white;
+    cursor: pointer;
+  }
+  .start-btn:disabled {
+    background: #cfcfcf;
+    cursor: not-allowed;
+  }
+  .start-btn:not(:disabled):hover { background: var(--green-dark); }
+
+  /* ---------- Chat screen ---------- */
+  .chat-screen {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+  }
+  .chat-screen.active { display: flex; }
+  .consent-screen.hidden { display: none; }
+
+  header.chat-header {
+    padding: 16px 20px;
     border-bottom: 1px solid var(--line);
     background: var(--paper);
   }
-  h1 {
-    font-size: 18px;
-    margin: 0 0 4px;
+  header.chat-header h1 {
+    font-size: 16px;
+    margin: 0;
     font-weight: 600;
   }
-  .sub {
-    font-size: 13px;
-    color: #777;
-    margin: 0 0 14px;
-  }
-  .config {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-  .config label {
-    font-size: 11px;
-    text-transform: none;
+  header.chat-header .sub {
+    font-size: 12.5px;
     color: #888;
-    display: block;
-    margin-bottom: 3px;
+    margin: 2px 0 0;
   }
-  .config input {
-    width: 100%;
-    padding: 7px 9px;
-    font-size: 13px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: white;
-    font-family: ui-monospace, monospace;
-  }
-  .config .full { grid-column: 1 / -1; }
-  .row-buttons {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  button {
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    padding: 8px 14px;
-    transition: opacity .15s;
-  }
-  button:hover { opacity: 0.85; }
-  button:disabled { opacity: 0.4; cursor: default; }
-  .btn-primary {
-    background: var(--green);
-    color: white;
-  }
-  .btn-secondary {
-    background: transparent;
-    color: #666;
-    border: 1px solid var(--line);
-  }
+
   main {
     flex: 1;
     overflow-y: auto;
@@ -116,6 +158,14 @@
     align-self: flex-start;
     border-bottom-left-radius: 4px;
   }
+  .bubble.ai:empty::before,
+  .bubble.ai.loading {
+    animation: fade 1.2s ease-in-out infinite;
+  }
+  @keyframes fade {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
   .bubble.user {
     background: var(--bubble-user);
     color: white;
@@ -129,13 +179,6 @@
     font-size: 12px;
     max-width: 100%;
     text-align: center;
-  }
-  .empty-state {
-    margin: auto;
-    text-align: center;
-    color: #999;
-    font-size: 14px;
-    padding: 40px 20px;
   }
   footer {
     padding: 14px 20px 20px;
@@ -161,7 +204,36 @@
     align-self: flex-end;
     height: 44px;
     padding: 0 18px;
+    font-family: inherit;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--green);
+    color: white;
+    cursor: pointer;
   }
+  .composer button:disabled { background: #cfcfcf; cursor: default; }
+  #micBtn {
+    background: white;
+    border: 1px solid var(--line) !important;
+    color: var(--ink);
+    font-size: 18px;
+    width: 44px;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  #micBtn.recording {
+    background: #d92b2b;
+    border-color: #d92b2b !important;
+    color: white;
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(217,43,43,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(217,43,43,0); }
+    100% { box-shadow: 0 0 0 0 rgba(217,43,43,0); }
+  }
+  #micBtn.processing { opacity: 0.5; cursor: wait; }
   .typing {
     align-self: flex-start;
     color: #999;
@@ -177,61 +249,119 @@
 </head>
 <body>
 <div class="app">
-  <header>
-    <h1>AI-Interview Tester</h1>
-    <p class="sub">Lokale Testoberfläche für den Lambda-Endpoint &mdash; kein Qualtrics nötig</p>
-    <div class="config">
-      <div class="full">
-        <label>Endpoint-URL</label>
-        <input id="endpoint" type="text" value="https://eyg30c9048.execute-api.eu-central-1.amazonaws.com/Prod/">
-      </div>
-      <div>
-        <label>Interview-Key</label>
-        <input id="interviewId" type="text" value="STOCK_MARKET">
-      </div>
-      <div>
-        <label>Session-ID</label>
-        <input id="sessionId" type="text" value="">
-      </div>
-    </div>
-    <div class="row-buttons">
-      <button class="btn-primary" id="startBtn">Neues Interview starten</button>
-      <button class="btn-secondary" id="clearBtn">Chat leeren</button>
-    </div>
-    <div class="status" id="status"></div>
-  </header>
 
-  <main id="chat">
-    <div class="empty-state" id="emptyState">Klicke &bdquo;Neues Interview starten&ldquo;, um loszulegen.</div>
-  </main>
+  <!-- ================= CONSENT / LANDING SCREEN ================= -->
+  <section class="consent-screen" id="consentScreen">
+    <h1>Research Interview: Cross-Selling in the Off-Road Machinery Sector</h1>
+    <p class="study-meta">Bachelor's thesis · Technische Hochschule Würzburg-Schweinfurt (THWS) · in cooperation with Schaeffler Technologies AG &amp; Co. KG</p>
 
-  <footer>
-    <div class="composer">
-      <textarea id="userInput" placeholder="Antwort eingeben…" disabled></textarea>
-      <button class="btn-primary" id="sendBtn" disabled>Senden</button>
+    <h2>About this study</h2>
+    <p>Thank you for taking the time to participate. This conversation is part of a Bachelor's thesis conducted at THWS, supervised by Prof. Dr. Uwe Sponholz, in the context of a practical semester at Schaeffler Technologies AG &amp; Co. KG. The study explores factors that support or hinder cross-selling within the off-road machinery sector.</p>
+
+    <h2>How this interview works</h2>
+    <p>This is an <strong>AI-led interview</strong>: your responses are read and followed up on by an AI system rather than a human interviewer in real time, though all results are analyzed by the researcher as part of this academic thesis. There are no right or wrong answers — we are interested in your genuine experiences and perspectives. You can respond by typing or, if you prefer, by speaking your answer (your voice is automatically converted to text, which you can review before sending).</p>
+    <p>Estimated duration: approx. 20–30 minutes.</p>
+
+    <h2>What data we collect</h2>
+    <ul>
+      <li>Your written responses during this interview</li>
+      <li>If you choose to use voice input: your spoken answer is processed briefly to convert it to text. The audio recording itself is not stored — only the resulting text becomes part of the interview record.</li>
+      <li>A system-generated session identifier</li>
+      <li>No further personal data is requested through this page</li>
+    </ul>
+
+    <h2>How your data is used and protected</h2>
+    <ul>
+      <li>Responses are stored on servers located in Frankfurt, Germany (AWS, EU region)</li>
+      <li>Data is analyzed in anonymized/pseudonymized form for the purposes of this academic thesis</li>
+      <li>Legal basis for processing: your explicit consent (Art. 6(1)(a) GDPR)</li>
+      <li>Data retention period: <span class="placeholder">[fill in — confirm with supervisor/data protection office]</span></li>
+      <li>Data protection contact: <span class="placeholder">[insert contact email, e.g. supervisor or THWS data protection officer]</span></li>
+    </ul>
+
+    <h2>Your rights</h2>
+    <ul>
+      <li>Participation is entirely voluntary</li>
+      <li>You may skip any question or end the interview at any time, without giving a reason</li>
+      <li>You may request access to, correction, or deletion of your data by contacting the address above</li>
+      <li>Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal</li>
+    </ul>
+
+    <div class="consent-box">
+      <label>
+        <input type="checkbox" id="consentCheckbox">
+        <span>I have read and understood the information above, and I voluntarily agree to participate in this interview.</span>
+      </label>
     </div>
-  </footer>
+    <button class="start-btn" id="consentStartBtn" disabled>Start Interview</button>
+  </section>
+
+  <!-- ================= CHAT SCREEN ================= -->
+  <div class="chat-screen" id="chatScreen">
+    <header class="chat-header">
+      <h1>Cross-Selling Interview</h1>
+      <p class="sub">Your responses are anonymized for research purposes.</p>
+    </header>
+
+    <main id="chat"></main>
+
+    <footer>
+      <div class="composer">
+        <textarea id="userInput" placeholder="Type your answer, or tap the microphone to speak…" maxlength="3000"></textarea>
+        <button id="micBtn" type="button" title="Record your answer">&#127908;</button>
+        <button id="sendBtn" disabled>Send</button>
+      </div>
+      <div class="status" id="status"></div>
+    </footer>
+  </div>
+
 </div>
 
 <script>
+  // ---- Fixed configuration (not editable by participants) ----
+  const ENDPOINT = "https://eyg30c9048.execute-api.eu-central-1.amazonaws.com/Prod/";
+  const INTERVIEW_ID = "STOCK_MARKET"; // TODO: replace with your real interview key once ready
+
+  const consentScreen = document.getElementById('consentScreen');
+  const chatScreen = document.getElementById('chatScreen');
+  const consentCheckbox = document.getElementById('consentCheckbox');
+  const consentStartBtn = document.getElementById('consentStartBtn');
   const chat = document.getElementById('chat');
-  const emptyState = document.getElementById('emptyState');
-  const endpointInput = document.getElementById('endpoint');
-  const interviewIdInput = document.getElementById('interviewId');
-  const sessionIdInput = document.getElementById('sessionId');
-  const startBtn = document.getElementById('startBtn');
-  const clearBtn = document.getElementById('clearBtn');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
   const statusEl = document.getElementById('status');
 
   function randomSessionId() {
-    return 'test-' + Math.random().toString(36).slice(2, 10);
+    return 'p-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
   }
-  sessionIdInput.value = randomSessionId();
+  const sessionId = randomSessionId();
+
+  // Matches the Lambda function's own 60s timeout (see template.yaml) so the
+  // browser never waits longer than the backend ever would.
+  async function fetchWithTimeout(url, options, timeoutMs = 60000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  consentCheckbox.addEventListener('change', () => {
+    consentStartBtn.disabled = !consentCheckbox.checked;
+  });
+
+  consentStartBtn.addEventListener('click', async () => {
+    consentScreen.classList.add('hidden');
+    chatScreen.classList.add('active');
+    setBusy(true);
+    await callNext('');
+    setBusy(false);
+    userInput.focus();
+  });
 
   function addBubble(text, role) {
-    if (emptyState.parentNode) emptyState.remove();
     const div = document.createElement('div');
     div.className = 'bubble ' + role;
     div.textContent = text;
@@ -240,83 +370,70 @@
     return div;
   }
 
-  function setStatus(msg) {
-    statusEl.textContent = msg || '';
-  }
+  function setStatus(msg) { statusEl.textContent = msg || ''; }
 
   function setBusy(busy) {
-    startBtn.disabled = busy;
     sendBtn.disabled = busy || userInput.value.trim() === '';
     userInput.disabled = busy;
+    micBtn.disabled = busy; // don't allow recording while a text reply is in flight
   }
 
   async function callNext(userMessage) {
-    const endpoint = endpointInput.value.trim();
     const body = {
       route: 'next',
       payload: {
-        session_id: sessionIdInput.value.trim(),
-        interview_id: interviewIdInput.value.trim(),
+        session_id: sessionId,
+        interview_id: INTERVIEW_ID,
         user_message: userMessage || ''
       }
     };
     const typing = document.createElement('div');
-    typing.className = 'typing';
-    typing.textContent = 'Interviewer tippt…';
+    typing.className = 'bubble ai loading';
+    typing.textContent = '…';
     chat.appendChild(typing);
     chat.scrollTop = chat.scrollHeight;
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetchWithTimeout(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-      typing.remove();
 
       if (!res.ok) {
         const text = await res.text();
-        setStatus('Fehler ' + res.status + ': ' + text.slice(0, 300));
+        typing.remove();
+        setStatus('Something went wrong (error ' + res.status + '). Please try again or contact the researcher.');
+        console.error(text);
         return;
       }
       const data = await res.json();
-      // The lambda returns the question as a string, sometimes JSON-encoded twice.
-      let question = data;
-      if (typeof question === 'string') {
-        try { question = JSON.parse(question); } catch (e) { /* already plain string */ }
-      }
-      const displayText = typeof question === 'string' ? question : JSON.stringify(question);
-      addBubble(displayText.replace('---END---', '').trim(), 'ai');
+      // Confirmed from logic.py: next_question() always returns a dict
+      // like {session_id, message} — the displayable text is in .message.
+      const displayText = (data && typeof data.message === 'string') ? data.message : JSON.stringify(data);
+      // Morph the loading bubble directly into the response, rather than
+      // removing it and appending a new one — matches the original
+      // Qualtrics integration's smoother visual transition.
+      typing.textContent = displayText.replace('---END---', '').trim();
+      typing.classList.remove('loading');
       setStatus('');
 
       if (displayText.includes('---END---')) {
-        addBubble('Interview beendet.', 'system');
+        addBubble('This interview has ended. Thank you very much for your participation!', 'system');
         userInput.disabled = true;
         sendBtn.disabled = true;
+        micBtn.disabled = true;
       }
     } catch (err) {
       typing.remove();
-      setStatus('Netzwerkfehler: ' + err.message + ' (CORS? Endpoint erreichbar?)');
+      if (err.name === 'AbortError') {
+        setStatus('The request took too long and was cancelled. Please try again.');
+      } else {
+        setStatus('Network error — please check your connection and try again.');
+      }
+      console.error(err);
     }
   }
-
-  startBtn.addEventListener('click', async () => {
-    chat.innerHTML = '';
-    sessionIdInput.value = randomSessionId();
-    setStatus('');
-    setBusy(true);
-    addBubble('Neue Session: ' + sessionIdInput.value, 'system');
-    await callNext('');
-    setBusy(false);
-    userInput.disabled = false;
-    userInput.focus();
-  });
-
-  clearBtn.addEventListener('click', () => {
-    chat.innerHTML = '';
-    emptyState.textContent = 'Klicke „Neues Interview starten“, um loszulegen.';
-    chat.appendChild(emptyState);
-  });
 
   async function sendUserMessage() {
     const msg = userInput.value.trim();
@@ -339,6 +456,134 @@
   userInput.addEventListener('input', () => {
     sendBtn.disabled = userInput.value.trim() === '';
   });
+
+  // Prevent copy/cut/paste — participants should type spontaneous answers,
+  // not paste pre-written text or copy questions out. Matches the original
+  // Qualtrics integration's research-integrity safeguard.
+  ['copy', 'cut', 'paste'].forEach((eventType) => {
+    [chat, userInput].forEach((el) => {
+      el.addEventListener(eventType, (e) => e.preventDefault());
+    });
+  });
+
+  // ---------- Voice input ----------
+  const micBtn = document.getElementById('micBtn');
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let isRecording = false;
+
+  if (!navigator.mediaDevices || !window.MediaRecorder) {
+    micBtn.style.display = 'none'; // graceful fallback on unsupported browsers
+  }
+
+  micBtn.addEventListener('click', async () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  });
+
+  // Backend (agent.py) hardcodes the filename as "audio.webm" when sending to
+  // Whisper, so we explicitly request a webm recording rather than relying on
+  // the browser's implicit default. Modern Edge (Chromium-based) supports this.
+  function pickSupportedMimeType() {
+    const candidates = ['audio/webm;codecs=opus', 'audio/webm'];
+    for (const type of candidates) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(type)) return type;
+    }
+    return ''; // let the browser pick if none of our preferred types are supported
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      const mimeType = pickSupportedMimeType();
+      mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+      mediaRecorder.onstop = handleRecordingStop;
+      mediaRecorder.start();
+      isRecording = true;
+      micBtn.classList.add('recording');
+      sendBtn.disabled = true; // can't send while recording, matching original Qualtrics pattern
+      setStatus('Recording… tap the microphone again to stop.');
+    } catch (err) {
+      setStatus('Microphone access denied or unavailable. You can still type your answer.');
+      console.error(err);
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      isRecording = false;
+      micBtn.classList.remove('recording');
+    }
+  }
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // reader.result looks like "data:audio/webm;base64,AAAA..."
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function handleRecordingStop() {
+    micBtn.classList.add('processing');
+    setStatus('Transcribing your answer…');
+    try {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const base64Audio = await blobToBase64(audioBlob);
+
+      const body = {
+        route: 'transcribe',
+        payload: { audio: base64Audio }
+      };
+      const res = await fetchWithTimeout(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        setStatus('Transcription failed (error ' + res.status + '). Please try again or type your answer.');
+        console.error(text);
+        return;
+      }
+
+      const data = await res.json();
+      // Confirmed from logic.py: transcribe() always returns {transcription: '...'}
+      const transcript = (data && typeof data.transcription === 'string') ? data.transcription : '';
+      if (!transcript) {
+        setStatus('Transcription came back empty. Please try again or type your answer.');
+        return;
+      }
+
+      // Populate the text field for review — never auto-send.
+      userInput.value = (userInput.value ? userInput.value + ' ' : '') + transcript;
+      setStatus('Transcribed — please review your answer below before sending.');
+      userInput.focus();
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        setStatus('Transcription took too long and was cancelled. Please try again or type your answer.');
+      } else {
+        setStatus('Something went wrong while transcribing. Please try again or type your answer.');
+      }
+      console.error(err);
+    } finally {
+      micBtn.classList.remove('processing');
+      sendBtn.disabled = userInput.value.trim() === ''; // always re-sync, whatever the outcome
+    }
+  }
 </script>
 </body>
 </html>
