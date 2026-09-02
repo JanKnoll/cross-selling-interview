@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Interview Tester</title>
+<style>
+  :root {
+    --green: #08954C;
+    --green-dark: #06753c;
+    --ink: #1a1a1a;
+    --paper: #faf9f7;
+    --line: #e2ddd4;
+    --bubble-ai: #ffffff;
+    --bubble-user: var(--green);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .app {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+  h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .sub {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 14px;
+  }
+  .config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .config label {
+    font-size: 11px;
+    text-transform: none;
+    color: #888;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .config input {
+    width: 100%;
+    padding: 7px 9px;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: white;
+    font-family: ui-monospace, monospace;
+  }
+  .config .full { grid-column: 1 / -1; }
+  .row-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 8px 14px;
+    transition: opacity .15s;
+  }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .btn-primary {
+    background: var(--green);
+    color: white;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: #666;
+    border: 1px solid var(--line);
+  }
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bubble {
+    max-width: 78%;
+    padding: 11px 14px;
+    border-radius: 14px;
+    font-size: 14.5px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+  .bubble.ai {
+    background: var(--bubble-ai);
+    border: 1px solid var(--line);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.user {
+    background: var(--bubble-user);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.system {
+    align-self: center;
+    background: transparent;
+    color: #999;
+    font-size: 12px;
+    max-width: 100%;
+    text-align: center;
+  }
+  .empty-state {
+    margin: auto;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    padding: 40px 20px;
+  }
+  footer {
+    padding: 14px 20px 20px;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .composer {
+    display: flex;
+    gap: 8px;
+  }
+  .composer textarea {
+    flex: 1;
+    resize: none;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    min-height: 44px;
+    max-height: 120px;
+  }
+  .composer button {
+    align-self: flex-end;
+    height: 44px;
+    padding: 0 18px;
+  }
+  .typing {
+    align-self: flex-start;
+    color: #999;
+    font-size: 13px;
+    padding: 4px 14px;
+  }
+  .status {
+    font-size: 12px;
+    margin-top: 8px;
+    color: #b33;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>AI-Interview Tester</h1>
+    <p class="sub">Lokale Testoberfläche für den Lambda-Endpoint &mdash; kein Qualtrics nötig</p>
+    <div class="config">
+      <div class="full">
+        <label>Endpoint-URL</label>
+        <input id="endpoint" type="text" value="https://eyg30c9048.execute-api.eu-central-1.amazonaws.com/Prod/">
+      </div>
+      <div>
+        <label>Interview-Key</label>
+        <input id="interviewId" type="text" value="STOCK_MARKET">
+      </div>
+      <div>
+        <label>Session-ID</label>
+        <input id="sessionId" type="text" value="">
+      </div>
+    </div>
+    <div class="row-buttons">
+      <button class="btn-primary" id="startBtn">Neues Interview starten</button>
+      <button class="btn-secondary" id="clearBtn">Chat leeren</button>
+    </div>
+    <div class="status" id="status"></div>
+  </header>
+
+  <main id="chat">
+    <div class="empty-state" id="emptyState">Klicke &bdquo;Neues Interview starten&ldquo;, um loszulegen.</div>
+  </main>
+
+  <footer>
+    <div class="composer">
+      <textarea id="userInput" placeholder="Antwort eingeben…" disabled></textarea>
+      <button class="btn-primary" id="sendBtn" disabled>Senden</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const chat = document.getElementById('chat');
+  const emptyState = document.getElementById('emptyState');
+  const endpointInput = document.getElementById('endpoint');
+  const interviewIdInput = document.getElementById('interviewId');
+  const sessionIdInput = document.getElementById('sessionId');
+  const startBtn = document.getElementById('startBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const statusEl = document.getElementById('status');
+
+  function randomSessionId() {
+    return 'test-' + Math.random().toString(36).slice(2, 10);
+  }
+  sessionIdInput.value = randomSessionId();
+
+  function addBubble(text, role) {
+    if (emptyState.parentNode) emptyState.remove();
+    const div = document.createElement('div');
+    div.className = 'bubble ' + role;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+  }
+
+  function setStatus(msg) {
+    statusEl.textContent = msg || '';
+  }
+
+  function setBusy(busy) {
+    startBtn.disabled = busy;
+    sendBtn.disabled = busy || userInput.value.trim() === '';
+    userInput.disabled = busy;
+  }
+
+  async function callNext(userMessage) {
+    const endpoint = endpointInput.value.trim();
+    const body = {
+      route: 'next',
+      payload: {
+        session_id: sessionIdInput.value.trim(),
+        interview_id: interviewIdInput.value.trim(),
+        user_message: userMessage || ''
+      }
+    };
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.textContent = 'Interviewer tippt…';
+    chat.appendChild(typing);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      typing.remove();
+
+      if (!res.ok) {
+        const text = await res.text();
+        setStatus('Fehler ' + res.status + ': ' + text.slice(0, 300));
+        return;
+      }
+      const data = await res.json();
+      // The lambda returns the question as a string, sometimes JSON-encoded twice.
+      let question = data;
+      if (typeof question === 'string') {
+        try { question = JSON.parse(question); } catch (e) { /* already plain string */ }
+      }
+      const displayText = typeof question === 'string' ? question : JSON.stringify(question);
+      addBubble(displayText.replace('---END---', '').trim(), 'ai');
+      setStatus('');
+
+      if (displayText.includes('---END---')) {
+        addBubble('Interview beendet.', 'system');
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+      }
+    } catch (err) {
+      typing.remove();
+      setStatus('Netzwerkfehler: ' + err.message + ' (CORS? Endpoint erreichbar?)');
+    }
+  }
+
+  startBtn.addEventListener('click', async () => {
+    chat.innerHTML = '';
+    sessionIdInput.value = randomSessionId();
+    setStatus('');
+    setBusy(true);
+    addBubble('Neue Session: ' + sessionIdInput.value, 'system');
+    await callNext('');
+    setBusy(false);
+    userInput.disabled = false;
+    userInput.focus();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    chat.innerHTML = '';
+    emptyState.textContent = 'Klicke „Neues Interview starten“, um loszulegen.';
+    chat.appendChild(emptyState);
+  });
+
+  async function sendUserMessage() {
+    const msg = userInput.value.trim();
+    if (!msg) return;
+    addBubble(msg, 'user');
+    userInput.value = '';
+    setBusy(true);
+    await callNext(msg);
+    setBusy(false);
+    userInput.focus();
+  }
+
+  sendBtn.addEventListener('click', sendUserMessage);
+  userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendUserMessage();
+    }
+  });
+  userInput.addEventListener('input', () => {
+    sendBtn.disabled = userInput.value.trim() === '';
+  });
+</script>
+</body>
+</html>
