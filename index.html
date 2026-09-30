@@ -32,6 +32,34 @@
     min-height: 100vh;
   }
 
+  /* ---------- Confidentiality notice (modal) ---------- */
+  .notice-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0, 0, 0, 0.55);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .notice-overlay.active { display: flex; }
+  .notice-box {
+    max-width: 520px; width: 100%;
+    background: #fdecec;
+    border: 3px solid #c62828;
+    border-radius: 10px;
+    padding: 22px 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+  .notice-box h2 {
+    margin: 0 0 10px; font-size: 1.1rem; color: #b71c1c;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .notice-box p { margin: 0 0 18px; line-height: 1.5; color: #3b0d0d; }
+  .notice-btn {
+    background: #c62828; color: #fff; border: 0; border-radius: 6px;
+    padding: 10px 18px; font-size: 1rem; cursor: pointer;
+  }
+  .notice-btn:hover { background: #a31f1f; }
+  .notice-btn:focus-visible { outline: 3px solid #ffb3b3; outline-offset: 2px; }
+
   /* ---------- Consent screen ---------- */
   .consent-screen {
     padding: 32px 24px 40px;
@@ -260,13 +288,13 @@
 
     <h2>How this interview works</h2>
     <p>This is an <strong>AI-led interview</strong>: your responses are read and followed up on by an AI system rather than a human interviewer in real time, though all results are analyzed by the researcher as part of this academic thesis. There are no right or wrong answers — we are interested in your genuine experiences and perspectives. You can respond by typing or, if you prefer, by speaking your answer (your voice is automatically converted to text, which you can review before sending).</p>
-    <p>Estimated duration: approx. 20–30 minutes.</p>
+    <p>Estimated duration: approx. 20–30 minutes. You can pause at any time and continue later by reopening the same link — your previous answers are saved. Please do not share your personal link.</p>
 
     <h2>What data we collect</h2>
     <ul>
       <li>Your written responses during this interview</li>
       <li>If you choose to use voice input: your spoken answer is processed briefly to convert it to text. The audio recording itself is not stored — only the resulting text becomes part of the interview record.</li>
-      <li>A system-generated session identifier</li>
+      <li>The session identifier contained in your personal interview link</li>
       <li>No further personal data is requested through this page</li>
     </ul>
 
@@ -293,7 +321,7 @@
         <span>I have read and understood the information above, and I voluntarily agree to participate in this interview.</span>
       </label>
     </div>
-    <button class="start-btn" id="consentStartBtn" disabled>Start Interview</button>
+    <button class="start-btn" id="consentStartBtn" disabled>Loading…</button>
   </section>
 
   <!-- ================= CHAT SCREEN ================= -->
@@ -317,10 +345,22 @@
 
 </div>
 
+<!-- ================= CONFIDENTIALITY NOTICE (shown on start and on resume) ================= -->
+<div class="notice-overlay" id="noticeOverlay" role="alertdialog" aria-modal="true" aria-labelledby="noticeTitle" aria-describedby="noticeText">
+  <div class="notice-box">
+    <h2 id="noticeTitle"><span aria-hidden="true">&#9888;</span><span id="noticeTitleText"></span></h2>
+    <p id="noticeText"></p>
+    <button class="notice-btn" id="noticeBtn" type="button"></button>
+  </div>
+</div>
+
 <script>
   // ---- Fixed configuration (not editable by participants) ----
   const ENDPOINT = "https://eyg30c9048.execute-api.eu-central-1.amazonaws.com/Prod/";
-  const INTERVIEW_ID = "CROSS_SELLING_PROBING_EN"; // TODO: replace with your real interview key once ready
+  // Language prefix of the session ID selects the interview configuration (see app/parameters.py).
+  const INTERVIEWS = { en: "CROSS_SELLING_PROBING_EN", de: "CROSS_SELLING_PROBING" };
+  const SID_PATTERN = /^(en|de)-[a-z0-9]{12,40}$/;
+  const STORAGE_KEY = "csi_session_id";
 
   const consentScreen = document.getElementById('consentScreen');
   const chatScreen = document.getElementById('chatScreen');
@@ -331,10 +371,62 @@
   const sendBtn = document.getElementById('sendBtn');
   const statusEl = document.getElementById('status');
 
+  // ---- Session ID: fixed via link (?sid=en-xxxx), else remembered in this browser, else new ----
   function randomSessionId() {
-    return 'p-' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    return 'en-' + Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
   }
-  const sessionId = randomSessionId();
+
+  function resolveSessionId() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('sid')) {
+      const sid = (params.get('sid') || '').trim().toLowerCase();
+      return SID_PATTERN.test(sid) ? sid : null; // malformed personal link -> error screen
+    }
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && SID_PATTERN.test(stored)) return stored;
+    } catch (e) { /* storage blocked: fall through to a fresh ID */ }
+    const fresh = randomSessionId();
+    try { localStorage.setItem(STORAGE_KEY, fresh); } catch (e) { /* resume on reload not possible */ }
+    return fresh;
+  }
+
+  const sessionId = resolveSessionId();
+  const INTERVIEW_ID = sessionId ? INTERVIEWS[sessionId.split('-')[0]] : null;
+  const LANG = sessionId ? sessionId.split('-')[0] : 'en';
+
+  // ---- Confidentiality notice (language follows the session prefix) ----
+  const NOTICE = {
+    de: {
+      title: 'Wichtiger Hinweis',
+      text: 'Es dürfen aufgrund von Datenschutzrichtlinien der Schaeffler Technologies AG & Co. KG keine genauen Informationen über Kunden oder Umsatzzahlen hier im Chat genannt werden. Zu diesen Informationen zählen Kundennamen, Umsatz- und Absatzzahlen sowie unternehmensinterne und geheime Informationen, die bei Veröffentlichung der Schaeffler Gruppe schaden können.',
+      button: 'Verstanden'
+    },
+    en: {
+      title: 'Important notice',
+      text: 'Due to the data protection guidelines of Schaeffler Technologies AG & Co. KG, no specific information about customers or sales figures may be shared in this chat. This includes customer names, revenue and sales volume figures, as well as company-internal and confidential information that could harm the Schaeffler Group if published.',
+      button: 'I understand'
+    }
+  };
+
+  function showNotice() {
+    const t = NOTICE[LANG] || NOTICE.en;
+    const overlay = document.getElementById('noticeOverlay');
+    const btn = document.getElementById('noticeBtn');
+    document.getElementById('noticeTitleText').textContent = t.title;
+    document.getElementById('noticeText').textContent = t.text;
+    btn.textContent = t.button;
+    overlay.classList.add('active');
+    btn.focus();
+    return new Promise(resolve => {
+      btn.addEventListener('click', () => {
+        overlay.classList.remove('active');
+        resolve();
+      }, { once: true });
+    });
+  }
 
   // Matches the Lambda function's own 60s timeout (see template.yaml) so the
   // browser never waits longer than the backend ever would.
@@ -348,18 +440,85 @@
     }
   }
 
+  let sessionChecked = false;
   consentCheckbox.addEventListener('change', () => {
-    consentStartBtn.disabled = !consentCheckbox.checked;
+    consentStartBtn.disabled = !(consentCheckbox.checked && sessionChecked);
   });
 
   consentStartBtn.addEventListener('click', async () => {
     consentScreen.classList.add('hidden');
     chatScreen.classList.add('active');
     setBusy(true);
+    await showNotice();
     await callNext('');
     setBusy(false);
     userInput.focus();
   });
+
+  // ---- Resume: load existing session before showing the consent screen ----
+  async function loadSession() {
+    try {
+      const res = await fetchWithTimeout(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ route: 'load', payload: { session_id: sessionId } })
+      }, 30000);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (err) {
+      console.error(err);
+      return null; // on failure, fall back to the normal start (backend guard prevents duplicates)
+    }
+  }
+
+  function showChat() {
+    consentScreen.classList.add('hidden');
+    chatScreen.classList.add('active');
+  }
+
+  function lockComposer() {
+    userInput.disabled = true;
+    sendBtn.disabled = true;
+    micBtn.disabled = true;
+  }
+
+  async function init() {
+    if (!sessionId || !INTERVIEW_ID) {
+      consentStartBtn.textContent = 'Invalid link';
+      addBubble('This interview link seems to be incomplete. Please open the full link from your invitation, or contact the researcher.', 'system');
+      showChat();
+      lockComposer();
+      return;
+    }
+
+    const state = await loadSession();
+    sessionChecked = true;
+    consentStartBtn.textContent = 'Start Interview';
+    consentStartBtn.disabled = !consentCheckbox.checked;
+
+    if (!state || !state.exists || !Array.isArray(state.messages) || state.messages.length === 0) {
+      return; // new participant: normal consent flow
+    }
+
+    // Returning participant: consent was given on the first visit -> go straight to the chat
+    showChat();
+    state.messages.forEach(m => {
+      addBubble(String(m.content || '').replace('---END---', '').trim(), m.role === 'ai' ? 'ai' : 'user');
+    });
+
+    if (state.terminated) {
+      addBubble('You have already completed this interview. Thank you very much for your participation!', 'system');
+      lockComposer();
+      return;
+    }
+
+    await showNotice();
+    setStatus(state.awaiting_answer
+      ? 'Welcome back — you can continue where you left off.'
+      : 'Welcome back — your last answer was saved. Please send a short message (e.g. "continue") to receive the next question.');
+    setBusy(false);
+    userInput.focus();
+  }
 
   function addBubble(text, role) {
     const div = document.createElement('div');
@@ -584,6 +743,8 @@
       sendBtn.disabled = userInput.value.trim() === ''; // always re-sync, whatever the outcome
     }
   }
+
+  init();
 </script>
 </body>
 </html>
