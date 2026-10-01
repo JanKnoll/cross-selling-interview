@@ -241,6 +241,7 @@
     cursor: pointer;
   }
   .composer button:disabled { background: #cfcfcf; cursor: default; }
+  .composer.ended { display: none; } /* interview finished: no text field, no microphone */
   #micBtn {
     background: white;
     border: 1px solid var(--line) !important;
@@ -476,10 +477,19 @@
     chatScreen.classList.add('active');
   }
 
+  // ---- End of interview: remove the input area completely ----
+  let interviewEnded = false;
   function lockComposer() {
+    interviewEnded = true;
+    if (typeof isRecording !== 'undefined' && isRecording && mediaRecorder) {
+      mediaRecorder.onstop = null; // discard a running recording instead of transcribing it
+      stopRecording();
+    }
+    userInput.value = '';
     userInput.disabled = true;
     sendBtn.disabled = true;
     micBtn.disabled = true;
+    document.querySelector('.composer').classList.add('ended');
   }
 
   async function init() {
@@ -532,6 +542,7 @@
   function setStatus(msg) { statusEl.textContent = msg || ''; }
 
   function setBusy(busy) {
+    if (interviewEnded) return; // never re-enable the input after the interview has ended
     sendBtn.disabled = busy || userInput.value.trim() === '';
     userInput.disabled = busy;
     micBtn.disabled = busy; // don't allow recording while a text reply is in flight
@@ -579,9 +590,7 @@
 
       if (displayText.includes('---END---')) {
         addBubble('This interview has ended. Thank you very much for your participation!', 'system');
-        userInput.disabled = true;
-        sendBtn.disabled = true;
-        micBtn.disabled = true;
+        lockComposer();
       }
     } catch (err) {
       typing.remove();
@@ -602,7 +611,7 @@
     setBusy(true);
     await callNext(msg);
     setBusy(false);
-    userInput.focus();
+    if (!interviewEnded) userInput.focus();
   }
 
   sendBtn.addEventListener('click', sendUserMessage);
