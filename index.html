@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Research Interview — Cross-Selling in Offroad Machinery</title>
+<title>Research Interview — Cross-Selling in Off-Road Machinery</title>
 <style>
   :root {
     --green: #08954C;
@@ -99,6 +99,55 @@
     font-size: 13px;
     color: #8a6100;
   }
+  /* ---------- Collapsible data protection box ---------- */
+  .privacy-box {
+    margin-top: 24px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: white;
+  }
+  .privacy-box summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 44px 14px 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .privacy-box summary::-webkit-details-marker { display: none; }
+  .privacy-box summary::after {
+    content: "";
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--green-dark);
+    border-bottom: 2px solid var(--green-dark);
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+  .privacy-box[open] summary::after { transform: translateY(-30%) rotate(-135deg); }
+  .privacy-box summary:hover { background: #f4f9f6; border-radius: 10px; }
+  .privacy-box summary:focus-visible { outline: 3px solid #9fd6b8; outline-offset: 2px; border-radius: 10px; }
+  .privacy-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--green-dark);
+  }
+  .privacy-hint {
+    font-size: 12.5px;
+    color: #888;
+  }
+  .privacy-box[open] .privacy-hint { display: none; }
+  .privacy-body {
+    padding: 0 16px 8px;
+    border-top: 1px solid var(--line);
+  }
+  .privacy-body h2:first-child { margin-top: 16px; }
   .consent-box {
     margin-top: 26px;
     padding: 16px;
@@ -289,7 +338,19 @@
 
     <h2 data-i18n="howH">How this interview works</h2>
     <p data-i18n="howP">This is an <strong>AI-led interview</strong>: your responses are read and followed up on by an AI system rather than a human interviewer in real time, though all results are analyzed by the researcher as part of this academic thesis. There are no right or wrong answers — we are interested in your genuine experiences and perspectives. You can respond by typing or, if you prefer, by speaking your answer (your voice is automatically converted to text, which you can review before sending).</p>
-    <p data-i18n="durationP">Estimated duration: approx. 20–30 minutes. You can pause at any time and continue later by reopening the same link — your previous answers are saved. Please do not share your personal link.</p>
+    <p data-i18n="durationP"><strong>Interview period: 12–25 October 2026.</strong> Estimated duration: approx. 20–30 minutes. You can pause at any time and continue later (until 25 October 2026) by reopening the same link — your previous answers are saved. Please do not share your personal link.</p>
+
+    <details class="privacy-box">
+    <summary>
+      <span class="privacy-title" data-i18n="privacySummary">Data protection information (GDPR)</span>
+      <span class="privacy-hint" data-i18n="privacyHint">Click to expand — please read before giving your consent</span>
+    </summary>
+    <div class="privacy-body">
+    <h2 data-i18n="respH">Who is responsible for your data</h2>
+    <ul>
+      <li data-i18n="resp1">Controller: <span class="placeholder">[name, postal address, email — clarify with the THWS data protection office whether THWS or the researcher is the controller]</span></li>
+      <li data-i18n="resp2">Data protection officer: <span class="placeholder">[contact details of the THWS data protection officer]</span></li>
+    </ul>
 
     <h2 data-i18n="dataH">What data we collect</h2>
     <ul>
@@ -302,24 +363,29 @@
     <h2 data-i18n="useH">How your data is used and protected</h2>
     <ul>
       <li data-i18n="use1">Responses are stored on servers located in Frankfurt, Germany (AWS, EU region)</li>
-      <li data-i18n="use2">Data is analyzed in anonymized/pseudonymized form for the purposes of this academic thesis</li>
+      <li data-i18n="use2">Your responses are stored in pseudonymized form (linked only to your session identifier) and are analyzed and reported in anonymized form for the purposes of this academic thesis</li>
       <li data-i18n="use3">Legal basis for processing: your explicit consent (Art. 6(1)(a) GDPR)</li>
-      <li data-i18n="use4">Data retention period: <span class="placeholder">[fill in — confirm with supervisor/data protection office]</span></li>
-      <li data-i18n="use5">Data protection contact: <span class="placeholder">[insert contact email, e.g. supervisor or THWS data protection officer]</span></li>
+      <li data-i18n="useRec">Recipients: Amazon Web Services (hosting, data processor) and <span class="placeholder">[AI provider, e.g. OpenAI]</span> (generating follow-up questions and converting voice input to text, data processor). Only the researcher <span class="placeholder">[and the supervisor — confirm]</span> has access to the interview transcripts; Schaeffler Technologies AG &amp; Co. KG receives aggregated, anonymized results only <span class="placeholder">[confirm]</span></li>
+      <li data-i18n="useTransfer">Transfer to a third country: when follow-up questions are generated and voice input is transcribed, your responses may be processed in the USA. Safeguard: <span class="placeholder">[EU–U.S. Data Privacy Framework adequacy decision / EU Standard Contractual Clauses — check with the provider]</span></li>
+      <li data-i18n="useAuto">No automated decision-making or profiling within the meaning of Art. 22 GDPR takes place; the AI system only formulates follow-up questions</li>
+      <li data-i18n="use4">Data retention period: your data will be deleted <span class="placeholder">[e.g. after the thesis has been graded, no later than DD.MM.YYYY — confirm with supervisor/data protection office]</span></li>
     </ul>
 
     <h2 data-i18n="rightsH">Your rights</h2>
     <ul>
-      <li data-i18n="r1">Participation is entirely voluntary</li>
+      <li data-i18n="r1">Participation is entirely voluntary; not participating has no disadvantages for you</li>
       <li data-i18n="r2">You may skip any question or end the interview at any time, without giving a reason</li>
-      <li data-i18n="r3">You may request access to, correction, or deletion of your data by contacting the address above</li>
-      <li data-i18n="r4">Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal</li>
+      <li data-i18n="r3">You have the right of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18) and data portability (Art. 20 GDPR). To exercise these rights, please contact the controller named above</li>
+      <li data-i18n="r4">You may withdraw your consent at any time with effect for the future, e.g. by an informal email to the controller. Withdrawal does not affect the lawfulness of processing carried out before withdrawal</li>
+      <li data-i18n="r5">You have the right to lodge a complaint with a data protection supervisory authority (Art. 77 GDPR), e.g. <span class="placeholder">[Bavarian State Commissioner for Data Protection (BayLfD), if THWS is the controller / Bavarian Data Protection Authority (BayLDA), if the controller is a private person or company]</span></li>
     </ul>
+    </div>
+    </details>
 
     <div class="consent-box">
       <label>
         <input type="checkbox" id="consentCheckbox">
-        <span data-i18n="consentLabel">I have read and understood the information above, and I voluntarily agree to participate in this interview.</span>
+        <span data-i18n="consentLabel">I have read and understood the information above, and I voluntarily agree to participate in this interview and to the processing of my data as described, including processing by the AI provider named above.</span>
       </label>
     </div>
     <button class="start-btn" id="consentStartBtn" disabled>Loading…</button>
@@ -329,7 +395,7 @@
   <div class="chat-screen" id="chatScreen">
     <header class="chat-header">
       <h1 data-i18n="chatTitle">Cross-Selling Interview</h1>
-      <p class="sub" data-i18n="chatSub">Your responses are anonymized for research purposes.</p>
+      <p class="sub" data-i18n="chatSub">Your responses are stored in pseudonymized form and analyzed anonymously.</p>
     </header>
 
     <main id="chat"></main>
@@ -362,6 +428,11 @@
   const INTERVIEWS = { en: "CROSS_SELLING_PROBING_EN", de: "CROSS_SELLING_PROBING" };
   const SID_PATTERN = /^(en|de)-[a-z0-9]{12,40}$/;
   const STORAGE_KEY = "csi_session_id";
+  // Consent record (Art. 7(1) GDPR): sends {version, lang, given_at} as payload.consent with the
+  // first request. Bump CONSENT_VERSION whenever the consent text changes. Set SEND_CONSENT_RECORD
+  // to true only once the backend accepts and stores payload.consent (unknown fields may break it).
+  const CONSENT_VERSION = "2026-10-11";
+  const SEND_CONSENT_RECORD = false;
 
   const consentScreen = document.getElementById('consentScreen');
   const chatScreen = document.getElementById('chatScreen');
@@ -402,14 +473,19 @@
   // ---- UI language follows the session prefix (de-/en-); EN is the fallback ----
   const UI = {
     en: {
-      docTitle: 'Research Interview — Cross-Selling in Offroad Machinery',
+      docTitle: 'Research Interview — Cross-Selling in Off-Road Machinery',
       title: 'Research Interview: Cross-Selling in the Off-Road Machinery Sector',
       meta: 'Bachelor\'s thesis · Technische Hochschule Würzburg-Schweinfurt (THWS) · in cooperation with Schaeffler Technologies AG &amp; Co. KG',
       aboutH: 'About this study',
       aboutP: 'Thank you for taking the time to participate. This conversation is part of a Bachelor\'s thesis conducted at THWS, supervised by Prof. Dr. Uwe Sponholz, in the context of a practical semester at Schaeffler Technologies AG &amp; Co. KG. The study explores factors that support or hinder cross-selling within the off-road machinery sector.',
       howH: 'How this interview works',
       howP: 'This is an <strong>AI-led interview</strong>: your responses are read and followed up on by an AI system rather than a human interviewer in real time, though all results are analyzed by the researcher as part of this academic thesis. There are no right or wrong answers — we are interested in your genuine experiences and perspectives. You can respond by typing or, if you prefer, by speaking your answer (your voice is automatically converted to text, which you can review before sending).',
-      durationP: 'Estimated duration: approx. 20–30 minutes. You can pause at any time and continue later by reopening the same link — your previous answers are saved. Please do not share your personal link.',
+      durationP: '<strong>Interview period: 12–25 October 2026.</strong> Estimated duration: approx. 20–30 minutes. You can pause at any time and continue later (until 25 October 2026) by reopening the same link — your previous answers are saved. Please do not share your personal link.',
+      privacySummary: 'Data protection information (GDPR)',
+      privacyHint: 'Click to expand — please read before giving your consent',
+      respH: 'Who is responsible for your data',
+      resp1: 'Controller: <span class="placeholder">[name, postal address, email — clarify with the THWS data protection office whether THWS or the researcher is the controller]</span>',
+      resp2: 'Data protection officer: <span class="placeholder">[contact details of the THWS data protection officer]</span>',
       dataH: 'What data we collect',
       data1: 'Your written responses during this interview',
       data2: 'If you choose to use voice input: your spoken answer is processed briefly to convert it to text. The audio recording itself is not stored — only the resulting text becomes part of the interview record.',
@@ -417,19 +493,22 @@
       data4: 'No further personal data is requested through this page',
       useH: 'How your data is used and protected',
       use1: 'Responses are stored on servers located in Frankfurt, Germany (AWS, EU region)',
-      use2: 'Data is analyzed in anonymized/pseudonymized form for the purposes of this academic thesis',
+      use2: 'Your responses are stored in pseudonymized form (linked only to your session identifier) and are analyzed and reported in anonymized form for the purposes of this academic thesis',
       use3: 'Legal basis for processing: your explicit consent (Art. 6(1)(a) GDPR)',
-      use4: 'Data retention period: <span class="placeholder">[fill in — confirm with supervisor/data protection office]</span>',
-      use5: 'Data protection contact: <span class="placeholder">[insert contact email, e.g. supervisor or THWS data protection officer]</span>',
+      useRec: 'Recipients: Amazon Web Services (hosting, data processor) and <span class="placeholder">[AI provider, e.g. OpenAI]</span> (generating follow-up questions and converting voice input to text, data processor). Only the researcher <span class="placeholder">[and the supervisor — confirm]</span> has access to the interview transcripts; Schaeffler Technologies AG &amp; Co. KG receives aggregated, anonymized results only <span class="placeholder">[confirm]</span>',
+      useTransfer: 'Transfer to a third country: when follow-up questions are generated and voice input is transcribed, your responses may be processed in the USA. Safeguard: <span class="placeholder">[EU–U.S. Data Privacy Framework adequacy decision / EU Standard Contractual Clauses — check with the provider]</span>',
+      useAuto: 'No automated decision-making or profiling within the meaning of Art. 22 GDPR takes place; the AI system only formulates follow-up questions',
+      use4: 'Data retention period: your data will be deleted <span class="placeholder">[e.g. after the thesis has been graded, no later than DD.MM.YYYY — confirm with supervisor/data protection office]</span>',
       rightsH: 'Your rights',
-      r1: 'Participation is entirely voluntary',
+      r1: 'Participation is entirely voluntary; not participating has no disadvantages for you',
       r2: 'You may skip any question or end the interview at any time, without giving a reason',
-      r3: 'You may request access to, correction, or deletion of your data by contacting the address above',
-      r4: 'Withdrawing consent does not affect the lawfulness of processing carried out before withdrawal',
-      consentLabel: 'I have read and understood the information above, and I voluntarily agree to participate in this interview.',
+      r3: 'You have the right of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18) and data portability (Art. 20 GDPR). To exercise these rights, please contact the controller named above',
+      r4: 'You may withdraw your consent at any time with effect for the future, e.g. by an informal email to the controller. Withdrawal does not affect the lawfulness of processing carried out before withdrawal',
+      r5: 'You have the right to lodge a complaint with a data protection supervisory authority (Art. 77 GDPR), e.g. <span class="placeholder">[Bavarian State Commissioner for Data Protection (BayLfD), if THWS is the controller / Bavarian Data Protection Authority (BayLDA), if the controller is a private person or company]</span>',
+      consentLabel: 'I have read and understood the information above, and I voluntarily agree to participate in this interview and to the processing of my data as described, including processing by the AI provider named above.',
       loading: 'Loading…', start: 'Start Interview', invalidLink: 'Invalid link',
       chatTitle: 'Cross-Selling Interview',
-      chatSub: 'Your responses are anonymized for research purposes.',
+      chatSub: 'Your responses are stored in pseudonymized form and analyzed anonymously.',
       placeholder: 'Type your answer, or tap the microphone to speak…',
       micTitle: 'Record your answer', send: 'Send',
       invalidMsg: 'This interview link seems to be incomplete. Please open the full link from your invitation, or contact the researcher.',
@@ -456,28 +535,36 @@
       aboutH: 'Über diese Studie',
       aboutP: 'Vielen Dank, dass Sie sich die Zeit für die Teilnahme nehmen. Dieses Gespräch ist Teil einer Bachelorarbeit an der THWS, betreut von Prof. Dr. Uwe Sponholz, im Rahmen eines Praxissemesters bei der Schaeffler Technologies AG &amp; Co. KG. Die Studie untersucht Faktoren, die Cross-Selling im Offroad-Maschinensektor fördern oder hemmen.',
       howH: 'So läuft das Interview ab',
-      howP: 'Dies ist ein <strong>KI-geführtes Interview</strong>: Ihre Antworten werden nicht in Echtzeit von einer Person, sondern von einem KI-System gelesen und mit Nachfragen vertieft; ausgewertet werden alle Ergebnisse vom Verfasser im Rahmen dieser Abschlussarbeit. Es gibt keine richtigen oder falschen Antworten — uns interessieren Ihre persönlichen Erfahrungen und Sichtweisen. Sie können Ihre Antwort tippen oder, wenn Sie möchten, einsprechen (Ihre Sprache wird automatisch in Text umgewandelt, den Sie vor dem Absenden prüfen können).',
-      durationP: 'Geschätzte Dauer: ca. 20–30 Minuten. Sie können jederzeit pausieren und später über denselben Link weitermachen — Ihre bisherigen Antworten bleiben gespeichert. Bitte geben Sie Ihren persönlichen Link nicht weiter.',
+      howP: 'Dies ist ein <strong>KI-geführtes Interview</strong>: Ihre Antworten werden nicht in Echtzeit von einer Person, sondern von einem KI-System gelesen und mit Nachfragen vertieft; ausgewertet werden alle Ergebnisse vom Verfasser im Rahmen dieser Abschlussarbeit. Es gibt keine richtigen oder falschen Antworten — uns interessieren Ihre persönlichen Erfahrungen und Sichtweisen. Sie können Ihre Antwort tippen oder, wenn Sie möchten, einsprechen (Ihre gesprochene Antwort wird automatisch in Text umgewandelt, den Sie vor dem Absenden prüfen können).',
+      durationP: '<strong>Befragungszeitraum: 12.–25. Oktober 2026.</strong> Geschätzte Dauer: ca. 20–30 Minuten. Sie können jederzeit pausieren und später (bis zum 25. Oktober 2026) über denselben Link weitermachen — Ihre bisherigen Antworten bleiben gespeichert. Bitte geben Sie Ihren persönlichen Link nicht weiter.',
+      privacySummary: 'Datenschutzhinweise (DSGVO)',
+      privacyHint: 'Zum Aufklappen klicken — bitte vor Ihrer Einwilligung lesen',
+      respH: 'Verantwortlich für die Datenverarbeitung',
+      resp1: 'Verantwortlicher: <span class="placeholder">[Name, Anschrift, E-Mail — mit der Datenschutzstelle der THWS klären, ob die THWS oder der Verfasser Verantwortlicher ist]</span>',
+      resp2: 'Datenschutzbeauftragte/r: <span class="placeholder">[Kontaktdaten der/des Datenschutzbeauftragten der THWS]</span>',
       dataH: 'Welche Daten wir erheben',
       data1: 'Ihre schriftlichen Antworten in diesem Interview',
       data2: 'Wenn Sie die Spracheingabe nutzen: Ihre gesprochene Antwort wird kurzzeitig verarbeitet, um sie in Text umzuwandeln. Die Audioaufnahme selbst wird nicht gespeichert — nur der daraus entstandene Text wird Teil des Interviewprotokolls.',
       data3: 'Die Sitzungskennung, die in Ihrem persönlichen Interviewlink enthalten ist',
       data4: 'Über diese Seite werden keine weiteren personenbezogenen Daten abgefragt',
       useH: 'Wie Ihre Daten verwendet und geschützt werden',
-      use1: 'Die Antworten werden auf Servern in Frankfurt am Main gespeichert (AWS, EU-Region)',
-      use2: 'Die Daten werden für die Zwecke dieser Abschlussarbeit in anonymisierter/pseudonymisierter Form ausgewertet',
+      use1: 'Die Antworten werden auf Servern in Frankfurt am Main, Deutschland, gespeichert (AWS, EU-Region)',
+      use2: 'Ihre Antworten werden pseudonymisiert gespeichert (nur mit Ihrer Sitzungskennung verknüpft) und für die Zwecke dieser Abschlussarbeit in anonymisierter Form ausgewertet und dargestellt',
       use3: 'Rechtsgrundlage der Verarbeitung: Ihre ausdrückliche Einwilligung (Art. 6 Abs. 1 lit. a DSGVO)',
-      use4: 'Speicherdauer: <span class="placeholder">[ergänzen — mit Betreuer/Datenschutzstelle abstimmen]</span>',
-      use5: 'Datenschutz-Kontakt: <span class="placeholder">[Kontakt-E-Mail eintragen, z. B. Betreuer oder Datenschutzbeauftragte/r der THWS]</span>',
+      useRec: 'Empfänger: Amazon Web Services (Hosting, Auftragsverarbeiter) und <span class="placeholder">[KI-Anbieter, z. B. OpenAI]</span> (Formulierung der Nachfragen und Umwandlung der Spracheingabe in Text, Auftragsverarbeiter). Zugriff auf die Interviewprotokolle hat nur der Verfasser <span class="placeholder">[und der Betreuer — bestätigen]</span>; die Schaeffler Technologies AG &amp; Co. KG erhält ausschließlich zusammengefasste, anonymisierte Ergebnisse <span class="placeholder">[bestätigen]</span>',
+      useTransfer: 'Übermittlung in ein Drittland: Bei der Formulierung der Nachfragen und der Transkription der Spracheingabe können Ihre Antworten in den USA verarbeitet werden. Garantie: <span class="placeholder">[Angemessenheitsbeschluss EU-U.S. Data Privacy Framework / EU-Standardvertragsklauseln — beim Anbieter prüfen]</span>',
+      useAuto: 'Es findet keine automatisierte Entscheidungsfindung und kein Profiling im Sinne von Art. 22 DSGVO statt; das KI-System formuliert ausschließlich Nachfragen',
+      use4: 'Speicherdauer: Ihre Daten werden <span class="placeholder">[z. B. nach Bewertung der Abschlussarbeit, spätestens am TT.MM.JJJJ — mit Betreuer/Datenschutzstelle abstimmen]</span> gelöscht',
       rightsH: 'Ihre Rechte',
-      r1: 'Die Teilnahme ist vollständig freiwillig',
+      r1: 'Die Teilnahme ist vollständig freiwillig; eine Nichtteilnahme hat für Sie keine Nachteile',
       r2: 'Sie können jede Frage überspringen oder das Interview jederzeit ohne Angabe von Gründen beenden',
-      r3: 'Sie können Auskunft über Ihre Daten sowie deren Berichtigung oder Löschung verlangen, indem Sie sich an die oben genannte Adresse wenden',
-      r4: 'Der Widerruf der Einwilligung berührt nicht die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung',
-      consentLabel: 'Ich habe die obigen Informationen gelesen und verstanden und erkläre mich freiwillig bereit, an diesem Interview teilzunehmen.',
+      r3: 'Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20 DSGVO). Wenden Sie sich dazu bitte an den oben genannten Verantwortlichen',
+      r4: 'Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen, z. B. durch eine formlose E-Mail an den Verantwortlichen. Der Widerruf berührt nicht die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung',
+      r5: 'Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren (Art. 77 DSGVO), z. B. <span class="placeholder">[Bayerischer Landesbeauftragter für den Datenschutz (BayLfD), wenn die THWS Verantwortliche ist / Bayerisches Landesamt für Datenschutzaufsicht (BayLDA), wenn eine Privatperson oder ein Unternehmen Verantwortlicher ist]</span>',
+      consentLabel: 'Ich habe die obigen Informationen gelesen und verstanden und erkläre mich freiwillig bereit, an diesem Interview teilzunehmen. Ich willige in die beschriebene Verarbeitung meiner Daten ein, einschließlich der Verarbeitung durch den oben genannten KI-Anbieter.',
       loading: 'Wird geladen…', start: 'Interview starten', invalidLink: 'Ungültiger Link',
       chatTitle: 'Cross-Selling-Interview',
-      chatSub: 'Ihre Antworten werden zu Forschungszwecken anonymisiert.',
+      chatSub: 'Ihre Antworten werden pseudonymisiert gespeichert und anonymisiert ausgewertet.',
       placeholder: 'Antwort eintippen oder auf das Mikrofon tippen, um zu sprechen…',
       micTitle: 'Antwort einsprechen', send: 'Senden',
       invalidMsg: 'Dieser Interviewlink scheint unvollständig zu sein. Bitte öffnen Sie den vollständigen Link aus Ihrer Einladung oder wenden Sie sich an den Verfasser der Studie.',
@@ -513,7 +600,7 @@
   const NOTICE = {
     de: {
       title: 'Wichtiger Hinweis',
-      text: 'Es dürfen aufgrund von Datenschutzrichtlinien der Schaeffler Technologies AG & Co. KG keine genauen Informationen über Kunden oder Umsatzzahlen hier im Chat genannt werden. Zu diesen Informationen zählen Kundennamen, Umsatz- und Absatzzahlen sowie unternehmensinterne und geheime Informationen, die bei Veröffentlichung der Schaeffler Gruppe schaden können.',
+      text: 'Es dürfen aufgrund von Datenschutzrichtlinien der Schaeffler Technologies AG & Co. KG keine genauen Informationen über Kunden oder Umsatzzahlen hier im Chat genannt werden. Zu diesen Informationen zählen Kundennamen, Umsatz- und Absatzzahlen sowie unternehmensinterne und geheime Informationen, die bei Veröffentlichung der Schaeffler-Gruppe schaden können.',
       button: 'Verstanden'
     },
     en: {
@@ -561,8 +648,9 @@
     consentScreen.classList.add('hidden');
     chatScreen.classList.add('active');
     setBusy(true);
+    const consentRecord = { version: CONSENT_VERSION, lang: LANG, given_at: new Date().toISOString() };
     await showNotice();
-    await callNext('');
+    await callNext('', consentRecord);
     setBusy(false);
     userInput.focus();
   });
@@ -657,7 +745,7 @@
     micBtn.disabled = busy; // don't allow recording while a text reply is in flight
   }
 
-  async function callNext(userMessage) {
+  async function callNext(userMessage, consent) {
     const body = {
       route: 'next',
       payload: {
@@ -666,6 +754,7 @@
         user_message: userMessage || ''
       }
     };
+    if (SEND_CONSENT_RECORD && consent) body.payload.consent = consent;
     const typing = document.createElement('div');
     typing.className = 'bubble ai loading';
     typing.textContent = '…';
